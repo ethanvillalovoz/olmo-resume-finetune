@@ -1,0 +1,82 @@
+# Fine-tuning config for OLMo-2-0425-1B on custom prompt-response dataset
+# Based on official-0425/OLMo2-1B-stage2-seed42069.yaml, simplified for custom data
+
+run_name: finetune_my_dataset_run
+
+save_folder: ./runs/finetune_my_dataset
+
+precision: fp32
+
+model:
+  d_model: 2048
+  n_heads: 16
+  n_layers: 16
+  mlp_ratio: 8
+  weight_tying: false
+  alibi: false
+  rope: true
+  rope_theta: 500000
+  flash_attention: true
+  attention_dropout: 0.0
+  include_bias: false
+  block_type: sequential
+  layer_norm_type: rms
+  layer_norm_with_affine: true
+  layer_norm_eps: 1e-6
+  bias_for_layer_norm: false
+  attention_layer_norm: true
+  attention_layer_norm_with_affine: true
+  norm_after: true
+  activation_type: swiglu
+  residual_dropout: 0.0
+  embedding_dropout: 0.0
+  max_sequence_length: 2048
+  vocab_size: 50257
+  embedding_size: 50272
+  eos_token_id: 50256
+  pad_token_id: 50256
+  init_device: meta
+  init_fn: normal
+  init_std: 0.02
+  init_cutoff_factor: 3
+
+data:
+  pad_direction: right
+  num_workers: 2
+  drop_last: true
+  pin_memory: true
+  prefetch_factor: 1
+  persistent_workers: true
+  timeout: 0
+  custom_dataset:
+    name: olmo_data.data.JsonlPromptResponseDataset
+    args:
+      path: ./data/my_dataset.jsonl
+      prompt_field: prompt
+      response_field: response
+      shuffle: true
+    collate_config:
+      input_id_field: "token_ids"
+
+global_train_batch_size: 8  # 4 batch_size * 8 gradient_accumulation_steps
+max_duration: 500              # 500 epochs for more training
+seed: 42
+save_interval: 500
+console_log_interval: 50
+
+device_train_microbatch_size: 2
+
+eval_interval: 500
+
+device_eval_batch_size: 4
+
+optimizer:
+  name: adamw
+  learning_rate: 5e-5
+  weight_decay: 0.01
+
+scheduler:
+  name: linear_with_warmup
+  t_warmup: 100
+
+# Add or adjust any other settings as needed for your hardware or experiment

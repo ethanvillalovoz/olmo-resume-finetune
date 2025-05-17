@@ -25,6 +25,64 @@
 
 OLMo is a repository for training and using AI2's state-of-the-art open language models. It is designed by scientists, for scientists.
 
+# Custom Fine-Tuning Example: Resume Data
+
+This fork demonstrates how to fine-tune the open-source [OLMo](https://allenai.org/olmo) large language model on a custom prompt-response dataset derived from Kaggle resume data.
+
+**Project Goal:**
+The goal of this project is to demonstrate the end-to-end process of fine-tuning an open-source LLM on a real-world, domain-specific dataset. We chose resume data because it is structured, widely available, and relevant for many practical NLP applications such as resume parsing, career coaching, and automated professional summary generation.
+
+**Data Source:**
+The dataset was sourced from Kaggle's public resume dataset (https://www.kaggle.com/datasets/gauravduttakiit/resume-dataset), which contains a large collection of resumes in text format. We processed this data into prompt-response pairs suitable for supervised fine-tuning.
+
+**What’s included:**
+- Data conversion script (`generate_dataset.py`): Converts the Kaggle resume CSV into a JSONL file of prompt-response pairs for LLM fine-tuning.
+- Custom PyTorch dataset (`olmo_data/data.py`): Implements `JsonlPromptResponseDataset` to load, tokenize, and pad the prompt-response data for OLMo.
+- Fine-tuning config (`configs/finetune_my_dataset.yaml`): YAML config for OLMo fine-tuning, specifying model, data, optimizer, and training parameters.
+- Training and evaluation scripts:
+  - `scripts/train.py`: Launches OLMo training (from AI2, not custom, but used here).
+  - `evaluate_hf_olmo.py`: Loads the HuggingFace-format model and generates completions for sample prompts.
+- HuggingFace conversion script (`scripts/convert_olmo_to_hf_new.py`): Converts OLMo checkpoints to HuggingFace Transformers format for easier inference and sharing.
+
+**How to Reproduce:**
+1. Prepare your data:  
+   `python generate_dataset.py`
+2. Fine-tune the model:  
+   `python scripts/train.py configs/finetune_my_dataset.yaml --save_overwrite`
+3. Convert to HuggingFace format:  
+   `python scripts/convert_olmo_to_hf_new.py --input_dir runs/finetune_my_dataset/stepXXX-unsharded --output_dir my_hf_olmo_model/`
+4. Evaluate:  
+   `python evaluate_hf_olmo.py`
+
+**Script Descriptions:**
+- `generate_dataset.py`: Reads the Kaggle resume CSV, creates prompt-response pairs, and writes them to `my_dataset.jsonl` for training.
+- `olmo_data/data.py`: Defines `JsonlPromptResponseDataset`, a PyTorch dataset that loads the JSONL, tokenizes, and pads prompt-response pairs for OLMo. (See comments in file for details.)
+- `configs/finetune_my_dataset.yaml`: YAML config for OLMo fine-tuning, specifying model architecture, data loader, optimizer, scheduler, and training hyperparameters.
+- `evaluate_hf_olmo.py`: Loads the fine-tuned HuggingFace-format OLMo model and tokenizer, runs inference on sample prompts, and prints the results. (See comments in file for details.)
+- `scripts/convert_olmo_to_hf_new.py`: Converts OLMo checkpoints to HuggingFace Transformers format for easier inference and sharing.
+
+**Sample Output:**
+```
+Prompt: Write a short professional summary for a software engineer:
+Response: [model output here]
+```
+
+**What I Learned & Did:**
+- Learned the end-to-end process of fine-tuning a large language model (OLMo) on a custom dataset, including data preparation, config, and training.
+- Implemented a custom PyTorch dataset for prompt-response data and integrated it with OLMo's training pipeline.
+- Debugged and resolved issues related to tokenization, padding, batch size, sequence length, and hardware limitations (Mac MPS/CPU).
+- Converted OLMo checkpoints to HuggingFace format and evaluated the model using Transformers.
+- Documented the process and created reproducible scripts for others to follow.
+
+**Limitations:**  
+- Training on Mac MPS is slow and some PyTorch ops fall back to CPU.
+- Model outputs are not always coherent due to limited compute and data.
+
+**Credit:**  
+This project is based on the original [OLMo repo by AI2](https://github.com/allenai/OLMo).
+
+---
+
 ## Installation
 
 First, install [PyTorch](https://pytorch.org) following the instructions specific to your operating system.

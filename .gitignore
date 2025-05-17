@@ -11,6 +11,7 @@ pip-wheel-metadata/
 # dev tools
 
 .envrc
+.env
 .python-version
 .idea
 .venv/
@@ -55,3 +56,11 @@ site/
 /wandb/
 /scratch/
 core
+
+# model outputs and checkpoints
+/my_hf_olmo_model/
+
+# data
+/data/
+*.jsonl
+*.zip
