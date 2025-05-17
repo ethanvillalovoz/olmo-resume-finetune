@@ -68,15 +68,18 @@ Response: [model output here]
 ```
 
 **What I Learned & Did:**
-- Learned the end-to-end process of fine-tuning a large language model (OLMo) on a custom dataset, including data preparation, config, and training.
-- Implemented a custom PyTorch dataset for prompt-response data and integrated it with OLMo's training pipeline.
-- Debugged and resolved issues related to tokenization, padding, batch size, sequence length, and hardware limitations (Mac MPS/CPU).
-- Converted OLMo checkpoints to HuggingFace format and evaluated the model using Transformers.
-- Documented the process and created reproducible scripts for others to follow.
+- Learned the end-to-end process of fine-tuning a large language model (OLMo) on a custom dataset, including data preparation, training configuration, and execution.
+- Implemented a custom PyTorch dataset for prompt-response data and successfully integrated it into OLMo’s training pipeline.
+- Debugged and resolved key issues related to tokenization, padding, batch size, sequence length, and hardware limitations (Mac MPS/CPU).
+- Converted OLMo checkpoints to HuggingFace format and performed inference using the Transformers library.
+- Documented the entire workflow and created reproducible scripts for others to follow and build upon.
 
-**Limitations:**  
-- Training on Mac MPS is slow and some PyTorch ops fall back to CPU.
-- Model outputs are not always coherent due to limited compute and data.
+
+**Limitations:**
+- Training on Mac MPS is significantly slower than on GPUs, and several PyTorch operations fallback to CPU, further increasing runtime.
+- Model output was often incoherent or grammatically incorrect. This is likely due to a combination of limited compute, small batch sizes, short training duration, and lack of large-scale or high-quality training data.
+- The project focused on demonstrating the fine-tuning workflow rather than achieving production-quality results, and highlighted key considerations for scaling future training (e.g., dataset refinement, better hardware, and tuning hyperparameters).
+
 
 **Credit:**  
 This project is based on the original [OLMo repo by AI2](https://github.com/allenai/OLMo).
